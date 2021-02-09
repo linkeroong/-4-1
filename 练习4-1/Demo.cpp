@@ -5,7 +5,6 @@
 2.允许键入回车和退格。
 3.允许使用箭头来编辑每个数字。
 4.创建一个键来将输出图像转化为彩色图像，每个不同的数字由不同的颜色显示。*/
-#include "opencv2/opencv.hpp"
 
 //实现a的部分
 #include <opencv2/opencv.hpp>
@@ -26,37 +25,104 @@ int main(int argc, char **argv) {
 	for (int i = 0; i < 10; i++)
 		cursorMat.at<uchar>(0, i) = 255;
 
-
-
 	init_numbers();
 	help();
 	cv::Mat1b display = cv::Mat1b::zeros(display_height,display_weight);
 	int count = 0;
 	unsigned hang = 0;//行
-	unsigned lie = 0;//列
+	unsigned lie = 0; //列
 
+
+	cv::Mat3b displayMat3 = cv::Mat3b::zeros(display_height, display_weight);
+	for (size_t i = 0; i < display_height; i++)
+		for (size_t j= 0; j < display_weight; j++)
+	{
+			displayMat3.at<cv::Vec3b>(j, i)[0] = rand() * 255;
+			displayMat3.at<cv::Vec3b>(j, i)[1] = rand() * 255;
+			displayMat3.at<cv::Vec3b>(j, i)[2] = rand() * 255;
+	}
 	//show the empty image
 	cv::namedWindow("Typewriter",cv::WINDOW_AUTOSIZE);
-	//cv::imshow("TYpewriter",display);
+	//cv::imshow("TYpewriter", display);
 	
 	//loop for input
-	int c= cv::waitKey(0);
+	int c= cv::waitKeyEx(0);
 	do {
-		
-		if ((char)c==13)
+		if (c == 2490368) {//向上箭头
+			
+	
+			if (hang > 0) {//不是第一行
+				//隐藏光标
+				for (int i = 0; i < 10; i++)
+					cursorMat.at<uchar>(0, i) = 0;
+				cursorMat.copyTo(display.rowRange(19 + 20 * hang, 20 + 20 * hang).colRange(0 + 10 * lie , 10 + 10 * lie ));
+				hang--;
+			}
+			for (int i = 0; i < 10; i++)
+				cursorMat.at<uchar>(0, i) = 255;
+				cursorMat.copyTo(display.rowRange(19 + 20 * hang, 20 + 20 * hang).colRange(0 + 10 * lie, 10 + 10 * lie));//显示光标
+				count = hang * 50+lie;
+		}
+		else if(c == 2621440){//向下箭头
+			if (hang < ((display_height / 20) - 1))//不是最后一行
+			{
+				//隐藏光标
+				for (int i = 0; i < 10; i++)
+					cursorMat.at<uchar>(0, i) = 0;
+				cursorMat.copyTo(display.rowRange(19 + 20 * hang, 20 + 20 * hang).colRange(0 + 10 * lie, 10 + 10 * lie));
+				hang++;
+			}
+			for (int i = 0; i < 10; i++)
+				cursorMat.at<uchar>(0, i) = 255;
+			cursorMat.copyTo(display.rowRange(19 + 20 * hang, 20 + 20 * hang).colRange(0 + 10 * lie, 10 + 10 * lie));//显示光标
+			count = hang * 50 + lie;
+		}
+		else if (c == 2424832) {//向左的箭头
+			if (lie > 0) {
+				//隐藏光标
+				for (int i = 0; i < 10; i++)
+					cursorMat.at<uchar>(0, i) = 0;
+				cursorMat.copyTo(display.rowRange(19 + 20 * hang, 20 + 20 * hang).colRange(0 + 10 * lie, 10 + 10 * lie));
+				lie--;
+			}
+			for (int i = 0; i < 10; i++)
+				cursorMat.at<uchar>(0, i) = 255;
+			cursorMat.copyTo(display.rowRange(19 + 20 * hang, 20 + 20 * hang).colRange(0 + 10 * lie, 10 + 10 * lie));//显示光标
+			count = hang * 50 + lie;
+		}
+		else if (c == 2555904) {//向右的箭头
+			if (lie < (display_weight / 10) - 1) {
+				//隐藏光标
+				for (int i = 0; i < 10; i++)
+					cursorMat.at<uchar>(0, i) = 0;
+				cursorMat.copyTo(display.rowRange(19 + 20 * hang, 20 + 20 * hang).colRange(0 + 10 * lie, 10 + 10 * lie));
+				lie++;
+			}
+			for (int i = 0; i < 10; i++)
+				cursorMat.at<uchar>(0, i) = 255;
+			cursorMat.copyTo(display.rowRange(19 + 20 * hang, 20 + 20 * hang).colRange(0 + 10 * lie, 10 + 10 * lie));//显示光标
+			count = hang * 50 + lie;
+		}
+		else if ((char)c==13)//换行
 		{
+			//删除最后的光标
 			for (int i = 0; i < 10; i++)
 				cursorMat.at<uchar>(0, i) = 0;
 			cursorMat.copyTo(display.rowRange(19 + 20 * hang, 20 + 20 * hang).colRange(0 + 10 * (lie ), 10 + 10 * (lie )));
-			for (int i = 0; i < 10; i++)
-				cursorMat.at<uchar>(0, i) = 255;
-			hang++;
+			if (hang < ((display_height / 20) - 1))//不是最后一行
+				hang++;
+
+	
+			count = hang*50;
 			lie = 0;
 			c = 0;
+			//显示光标
+			for (int i = 0; i < 10; i++)
+				cursorMat.at<uchar>(0, i) = 255;
+			cursorMat.copyTo(display.rowRange(19 + 20 * hang, 20 + 20 * hang).colRange(0 + 10 * (lie), 10 + 10 * (lie)));
 		}
-		else if ((char)c == 8)
+		else if ((char)c == 8)//backspace 删除符
 		{
-			
 			count--;
 			if (count < 0)
 			{
@@ -65,19 +131,24 @@ int main(int argc, char **argv) {
 				continue;
 			}
 			int tmp = lie;
-			if (tmp > 0)
+			if (tmp > 0) {
 				lie--;
+				//隐藏光标
+				for (int i = 0; i < 10; i++)
+					cursorMat.at<uchar>(0, i) = 0;
+				cursorMat.copyTo(display.rowRange(19 + 20 * hang, 20 + 20 * hang).colRange(0 + 10 * (lie + 1), 10 + 10 * (lie + 1)));
+			
+			}
 			else if (tmp==0)
 			{
+				for (int i = 0; i < 10; i++)
+					cursorMat.at<uchar>(0, i) = 0;
+				cursorMat.copyTo(display.rowRange(19 + 20 * hang, 20 + 20 * hang).colRange(0 + 10 * lie , 10 + 10 * lie ));
 				hang--;
-				lie = (display_weight / 10);
+				lie = (display_weight / 10)-1;
 			}
 			cout << "hang:" << hang << "lie:" << lie << endl;
-			for (int i = 0; i < 10; i++)
-				cursorMat.at<uchar>(0, i) = 0;
-			cursorMat.copyTo(display.rowRange(19 + 20 * hang, 20 + 20 * hang).colRange(0 + 10 * (lie+1), 10 + 10 * (lie+1)));
-
-			numbers[10].copyTo(display.rowRange(0+20*hang,20+20*hang).colRange(0 + 10 * lie, 10 + 10 * lie));
+					numbers[10].copyTo(display.rowRange(0+20*hang,20+20*hang).colRange(0 + 10 * lie, 10 + 10 * lie));
 			for (int i = 0; i < 10; i++)
 				cursorMat.at<uchar>(0, i) = 255;
 			cursorMat.copyTo(display.rowRange(19 + 20 * hang, 20 + 20 * hang).colRange(0 + 10 * lie, 10 + 10 * lie));//光标显示
@@ -85,20 +156,29 @@ int main(int argc, char **argv) {
 		}
 		else if((char)c>='0' && (char)c<='9'){
 			cout << "number input" << endl;
+			//数字复制到显示矩阵对应的位置
 			numbers[c - '0'].copyTo(display.rowRange(0 + 20 * hang, 20 + 20 * hang).colRange(0 + 10 * lie, 10 + 10 * lie));
-	
-			count++;
-			lie++;
-			if (lie == (display_weight/10)) {
-				lie = 0; 
-				hang++;
+			if (hang< display_weight / 10 - 1)
+			{
+
+				count++;
+				lie++;
+				if (lie == (display_weight/10)) {
+					if (hang < ((display_height / 20) - 1)) {
+						lie = 0;
+						hang++;
+					}
+					else {//如位于最后一行和列 
+						lie = (display_weight / 10) - 1;
+					}
+				}
+				cursorMat.copyTo(display.rowRange(19 + 20 * hang, 20 + 20 * hang).colRange(0 + 10 * lie, 10 + 10 * lie));//显示光标
 			}
-			cursorMat.copyTo(display.rowRange(19 + 20 * hang, 20 + 20 * hang).colRange(0 + 10 * lie, 10 + 10 * lie));
 		}
 		
 		cout << (char)c << endl;
 		cv::imshow("Typewriter", display);
-		c = cv::waitKey(0);
+		c = cv::waitKeyEx(0);
 	} while (1);
 
 	cv::waitKey(0);
