@@ -14,8 +14,11 @@ using namespace std;
 const int display_height = 500;
 const int display_weight = 500;
 vector<cv::Mat1b> numbers;
-
+//存放彩色矩阵
+vector<cv::Mat3b> numbers3b;
 void init_numbers(void);
+//初始化彩色矩阵从0~1
+void init_numbers3b(void);
 void help(void);
 
 int main(int argc, char **argv) {
@@ -26,6 +29,7 @@ int main(int argc, char **argv) {
 		cursorMat.at<uchar>(0, i) = 255;
 
 	init_numbers();
+	init_numbers3b();
 	help();
 	cv::Mat1b display = cv::Mat1b::zeros(display_height,display_weight);
 	int count = 0;
@@ -34,21 +38,26 @@ int main(int argc, char **argv) {
 
 
 	cv::Mat3b displayMat3 = cv::Mat3b::zeros(display_height, display_weight);
-	for (size_t i = 0; i < display_height; i++)
+	/*for (size_t i = 0; i < display_height; i++)
 		for (size_t j= 0; j < display_weight; j++)
 	{
 			displayMat3.at<cv::Vec3b>(j, i)[0] = rand() * 255;
 			displayMat3.at<cv::Vec3b>(j, i)[1] = rand() * 255;
 			displayMat3.at<cv::Vec3b>(j, i)[2] = rand() * 255;
-	}
-	//show the empty image
+	}*/
+	//show the empty image 
 	cv::namedWindow("Typewriter",cv::WINDOW_AUTOSIZE);
 	//cv::imshow("TYpewriter", display);
 	
 	//loop for input
 	int c= cv::waitKeyEx(0);
 	do {
-		if (c == 2490368) {//向上箭头
+		if (c=='s')//输出一张彩色图片
+		{
+			//显示彩色图片
+			cv::imshow("彩色图片", displayMat3);
+		}else if (c == 2490368) {//向上箭头
+		
 			
 	
 			if (hang > 0) {//不是第一行
@@ -149,7 +158,8 @@ int main(int argc, char **argv) {
 			}
 			cout << "hang:" << hang << "lie:" << lie << endl;
 					numbers[10].copyTo(display.rowRange(0+20*hang,20+20*hang).colRange(0 + 10 * lie, 10 + 10 * lie));
-			for (int i = 0; i < 10; i++)
+					numbers3b[10].copyTo(displayMat3.rowRange(0 + 20 * hang, 20 + 20 * hang).colRange(0 + 10 * lie, 10 + 10 * lie));
+					for (int i = 0; i < 10; i++)
 				cursorMat.at<uchar>(0, i) = 255;
 			cursorMat.copyTo(display.rowRange(19 + 20 * hang, 20 + 20 * hang).colRange(0 + 10 * lie, 10 + 10 * lie));//光标显示
 	
@@ -158,6 +168,8 @@ int main(int argc, char **argv) {
 			cout << "number input" << endl;
 			//数字复制到显示矩阵对应的位置
 			numbers[c - '0'].copyTo(display.rowRange(0 + 20 * hang, 20 + 20 * hang).colRange(0 + 10 * lie, 10 + 10 * lie));
+			//彩色图片
+			numbers3b[c - '0'].copyTo(displayMat3.rowRange(0 + 20 * hang, 20 + 20 * hang).colRange(0 + 10 * lie, 10 + 10 * lie));
 			if (hang< display_weight / 10 - 1)
 			{
 
@@ -343,6 +355,200 @@ void init_numbers() {
 	for (int i = 3; i < 10; i++)
 	{
 		numbers[9].at<unsigned char>(i, 2) = 255;
+	}
+
+
+	//10 空白符号用于清空
+
+}
+
+void init_numbers3b() {
+	//init numbers
+	for (int i = 0; i < 11; i++) {
+		numbers3b.push_back(cv::Mat3b::zeros(20, 10));
+	}
+	//0
+	for (int i = 2; i < 8; i++)
+	{
+		numbers3b[0].at<cv::Vec3b>(2, i)[0] = 125;
+		numbers3b[0].at<cv::Vec3b>(2, i)[1] = 0;
+		numbers3b[0].at<cv::Vec3b>(2, i)[2] = 0;
+		numbers3b[0].at<cv::Vec3b>(17, i)[0] = 125;
+		numbers3b[0].at<cv::Vec3b>(17, i)[1] = 0;
+		numbers3b[0].at<cv::Vec3b>(17, i)[2] = 0;
+
+	}
+	for (int i = 3; i < 17; i++)
+	{	
+		numbers3b[0].at<cv::Vec3b>(i, 2)[0] = 125;
+		numbers3b[0].at<cv::Vec3b>(i, 2)[1] = 0;
+		numbers3b[0].at<cv::Vec3b>(i, 2)[2] = 0;
+		numbers3b[0].at<cv::Vec3b>(i, 7)[0] = 125;
+		numbers3b[0].at<cv::Vec3b>(i, 7)[1] = 0;
+		numbers3b[0].at<cv::Vec3b>(i, 7)[2] = 0;
+	}
+
+	//1
+	for (int i = 2; i < 8; i++)
+	{
+		numbers3b[1].at<cv::Vec3b>(17, i)[0] = 255;
+	}
+	for (int i = 3; i < 17; i++)
+	{
+		numbers3b[1].at<cv::Vec3b>(i, 5)[0] = 255;
+	}
+	numbers3b[1].at<cv::Vec3b>(5, 2)[0] = 255;
+	numbers3b[1].at<cv::Vec3b>(4, 3)[0] = 255;
+	numbers3b[1].at<cv::Vec3b>(3, 4)[0] = 255;
+	numbers3b[1].at<cv::Vec3b>(2, 5)[0] = 255;
+
+	//2:
+	for (int i = 2; i < 8; i++)
+	{
+		numbers3b[2].at<cv::Vec3b>(2, i)[1]= 125;
+		numbers3b[2].at<cv::Vec3b>(9, i)[1]= 125;
+		numbers3b[2].at<cv::Vec3b>(17, i)[1] = 125;
+	}
+	for (int i = 3; i < 9; i++)
+	{
+		numbers3b[2].at<cv::Vec3b>(i, 7)[1] = 125;
+	}
+	for (int i = 10; i < 17; i++)
+	{
+		numbers3b[2].at<cv::Vec3b>(i, 2)[1] = 125;
+	}
+
+	//3:
+	for (int i = 2; i < 8; i++)
+	{
+		numbers3b[3].at<cv::Vec3b>(2, i)[1] = 255;
+		numbers3b[3].at<cv::Vec3b>(9, i)[1] = 255;
+		numbers3b[3].at<cv::Vec3b>(17, i)[1] = 255;
+	}
+	for (int i = 3; i < 9; i++)
+	{
+		numbers3b[3].at<cv::Vec3b>(i, 7)[1] = 255;
+	}
+	for (int i = 10; i < 17; i++)
+	{
+		numbers3b[3].at<cv::Vec3b>(i, 7)[1] = 255;
+	}
+	//4:
+	for (int i = 2; i < 8; i++)
+	{
+		numbers3b[4].at<cv::Vec3b>(10, i)[2] = 125;
+	}
+	for (int i = 2; i < 18; i++)
+	{
+		numbers3b[4].at<cv::Vec3b>(i, 5)[2] = 125;
+	}
+	numbers3b[4].at<cv::Vec3b>(4, 4)[2] = 125;
+	numbers3b[4].at<cv::Vec3b>(5, 4)[2] = 125;
+	numbers3b[4].at<cv::Vec3b>(6, 3)[2] = 125;
+	numbers3b[4].at<cv::Vec3b>(7, 3)[2] = 125;
+	numbers3b[4].at<cv::Vec3b>(8, 3)[2] = 125;
+	numbers3b[4].at<cv::Vec3b>(9, 2)[2] = 125;
+	numbers3b[4].at<cv::Vec3b>(10, 2)[2] = 125;
+	//5:
+	for (int i = 2; i < 8; i++)
+	{
+		numbers3b[5].at<cv::Vec3b>(2, i)[2] = 255;
+		numbers3b[5].at<cv::Vec3b>(9, i)[2] = 255;
+		numbers3b[5].at<cv::Vec3b>(17, i)[2] = 255;
+	}
+	for (int i = 3; i < 9; i++)
+	{
+		numbers3b[5].at<cv::Vec3b>(i, 2)[2] = 255;
+	}
+	for (int i = 10; i < 17; i++)
+	{
+		numbers3b[5].at<cv::Vec3b>(i, 7)[2] = 255;
+	}
+	//6:
+	for (int i = 2; i < 8; i++)
+	{
+		numbers3b[6].at<cv::Vec3b>(2, i)[0] = 125;
+		numbers3b[6].at<cv::Vec3b>(9, i)[0] = 125;
+		numbers3b[6].at<cv::Vec3b>(17, i)[0] = 125;
+		numbers3b[6].at<cv::Vec3b>(2, i)[1] = 125;
+		numbers3b[6].at<cv::Vec3b>(9, i)[1] = 125;
+		numbers3b[6].at<cv::Vec3b>(17, i)[1] = 125;
+	}
+	for (int i = 3; i < 17; i++)
+	{
+		numbers3b[6].at<cv::Vec3b>(i, 2)[0] = 125;
+		numbers3b[6].at<cv::Vec3b>(i, 2)[1] = 125;
+	}
+	for (int i = 10; i < 17; i++)
+	{
+		numbers3b[6].at<cv::Vec3b>(i, 7)[0] = 125;
+		numbers3b[6].at<cv::Vec3b>(i, 2)[1] = 125;
+	}
+	//7:
+	for (int i = 2; i < 8; i++)
+	{
+		numbers3b[7].at<cv::Vec3b>(2, i)[0] = 255;
+		numbers3b[7].at<cv::Vec3b>(2, i)[1] = 125;
+	}
+	for (int i = 3; i < 6; i++)
+	{
+		numbers3b[7].at<cv::Vec3b>(i, 7)[0] = 255;
+		numbers3b[7].at<cv::Vec3b>(i, 7)[1] = 125;
+	}
+	for (int i = 6; i < 10; i++)
+	{
+		numbers3b[7].at<cv::Vec3b>(i, 6)[0] = 255;
+		numbers3b[7].at<cv::Vec3b>(i, 6)[1] = 125;
+	}
+	for (int i = 10; i < 14; i++)
+	{
+		numbers3b[7].at<cv::Vec3b>(i, 5)[0] = 255;
+		numbers3b[7].at<cv::Vec3b>(i, 6)[1] = 125;
+	}
+	for (int i = 14; i < 18; i++)
+	{
+		numbers3b[7].at<cv::Vec3b>(i, 4)[0] = 255;
+		numbers3b[7].at<cv::Vec3b>(i, 6)[1] = 125;
+	}
+	//8:
+	for (int i = 2; i < 8; i++)
+	{
+		numbers3b[8].at<cv::Vec3b>(2, i)[1] = 255;
+		numbers3b[8].at<cv::Vec3b>(9, i)[1] = 255;
+		numbers3b[8].at<cv::Vec3b>(17, i)[1] = 255;
+		numbers3b[8].at<cv::Vec3b>(2, i)[2] = 255;
+		numbers3b[8].at<cv::Vec3b>(9, i)[2] = 255;
+		numbers3b[8].at<cv::Vec3b>(17, i)[2] = 255;
+	}
+	for (int i = 3; i < 17; i++)
+	{
+		numbers3b[8].at<cv::Vec3b>(i, 2)[1] = 255;
+		numbers3b[8].at<cv::Vec3b>(i, 2)[2] = 255;
+	}
+	for (int i = 3; i < 17; i++)
+	{
+		numbers3b[8].at<cv::Vec3b>(i, 7)[1] = 255;
+		numbers3b[8].at<cv::Vec3b>(i, 7)[2] = 255;
+	}
+	//9:
+	for (int i = 2; i < 8; i++)
+	{
+		numbers3b[9].at<cv::Vec3b>(2, i)[0] = 255;
+		numbers3b[9].at<cv::Vec3b>(9, i)[0] = 255;
+		numbers3b[9].at<cv::Vec3b>(17, i)[0] = 255;
+		numbers3b[9].at<cv::Vec3b>(2, i)[2] = 255;
+		numbers3b[9].at<cv::Vec3b>(9, i)[2] = 255;
+		numbers3b[9].at<cv::Vec3b>(17, i)[2] = 255;
+	}
+	for (int i = 3; i < 17; i++)
+	{
+		numbers3b[9].at<cv::Vec3b>(i, 7)[0] = 255;
+		numbers3b[9].at<cv::Vec3b>(i, 7)[2] = 255;
+	}
+	for (int i = 3; i < 10; i++)
+	{
+		numbers3b[9].at<cv::Vec3b>(i, 2)[0] = 255;
+		numbers3b[9].at<cv::Vec3b>(i, 2)[2] = 255;
 	}
 
 
